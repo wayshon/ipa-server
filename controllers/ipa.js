@@ -1,6 +1,7 @@
 const fs = require('fs'),
     tool = require("../utils/Tools"),
-    unzip = require("unzip"),
+    adm_zip = require('adm-zip'),
+
     childProcess = require('child_process'),
     plist = require('plist');
 
@@ -26,7 +27,8 @@ class UtilsController {
         //     stream = fs.createWriteStream(filePath);
         // reader.pipe(stream);
 
-        fs.createReadStream(ipa.path).pipe(unzip.Extract({ path: filePath }));
+        new adm_zip(ipa.path).extractAllTo(`${process.cwd()}/public/ipa/${time}/`, true);
+        
 
         await creatPlist(`public/ipa/${time}/Payload/ctripzhuanche.app`);
 
@@ -37,7 +39,7 @@ class UtilsController {
 }
 
 let dealFun = async (plistPath) => {
-    let originFile = fs.readFileSync(`${plistPath}/tempInfo.plist`, 'utf8');
+    let originFile = fs.readFileSync(`${process.cwd()}/${plistPath}/tempInfo.plist`, 'utf8');
 
     // 删除tempInfo文件
     fs.unlink(`${process.cwd()}/${plistPath}/tempInfo.plist`, err => {

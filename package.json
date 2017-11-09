@@ -9,6 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "adm-zip": "^0.4.7",
     "archiver": "^2.1.0",
     "debug": "^2.6.3",
     "ejs": "^2.5.7",
