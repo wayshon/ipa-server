@@ -48,7 +48,7 @@ class UtilsController {
         // }
 
         await ctx.render('download', {
-            title: `下载 ${CFBundleDisplayName}`,
+            title: CFBundleDisplayName,
             manifest: `http://wayshon.com:3344/ipa/${time}/manifest.plist`,
         })
     }
