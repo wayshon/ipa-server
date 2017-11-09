@@ -42,7 +42,9 @@ const plist = require('plist');
 const process = require('child_process');
  
 let dealFun = () => {
-  let originFile = fs.readFileSync(path.join(__dirname,'/public/plist-file/tempInfo.plist'), 'utf8');
+  let tempInfo = fs.readFileSync(path.join(__dirname,'/public/plist-file/tempInfo.plist'), 'utf8');
+  let originFile = plist.parse(tempInfo);
+
   // 删除tempInfo文件
   fs.unlink(path.join(__dirname,'/public/plist-file/tempInfo.plist'),err => {
     err && console.log(err)
