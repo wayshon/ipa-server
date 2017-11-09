@@ -35,7 +35,7 @@ class UtilsController {
         let plistPath = `${process.cwd()}/public/temp/Payload/ctripzhuanche.app`,
             targetPath = `${process.cwd()}/public/ipa/${time}`;
 
-        await creatPlist(plistPath, targetPath, ipaPath);
+        let CFBundleDisplayName = await creatPlist(plistPath, targetPath, ipaPath);
 
         // 删除temp里的文件
         childProcess.exec(`rm -rf ${tempPath}/${ipa.name}`, (error, stdout, stderr) => {
@@ -48,7 +48,7 @@ class UtilsController {
         // }
 
         await ctx.render('download', {
-            title: `下载 ${ipa.name}`,
+            title: `下载 ${CFBundleDisplayName}`,
             manifest: `http://wayshon.com:3344/ipa/${time}/manifest.plist`,
         })
     }
@@ -78,7 +78,7 @@ let dealFun = async (plistPath, targetPath, ipaPath) => {
     // console.log(manifest)
 
     await writeFile(plistPath, targetPath, manifest);
-    return 1;
+    return CFBundleDisplayName;
 }
 
 let exec = async (plistPath) => {
@@ -108,8 +108,8 @@ let writeFile = (plistPath, targetPath, manifest) => {
 
 let creatPlist = async (plistPath, targetPath, ipaPath) => {
     await exec(plistPath);
-    await dealFun(plistPath, targetPath, ipaPath);
-    return 1;
+    let CFBundleDisplayName = await dealFun(plistPath, targetPath, ipaPath);
+    return CFBundleDisplayName;
 }
 
 
