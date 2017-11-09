@@ -1,4 +1,4 @@
-<DOCTYPE html>
+<!DOCTYPE HTML>
     <html>
 
     <head>
@@ -8,13 +8,12 @@
     </head>
 
     <body>
-        <a id="download">点击开始安装<%=title%></a>
         <script>
-            var download = document.getElementById('download');
-            download.addEventListener('click', function(event) {
+            window.onload = function() {
                 var url = encodeURI('tms-services://?action=download-manifest&url=<%=manifest%>');
                 location.href = "https://wayshon.com/ipa/download.html?url=" + url;
-            },false)
+            }
+            
         </script>
     </body>
 
