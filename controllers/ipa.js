@@ -67,7 +67,7 @@ let dealFun = async (plistPath) => {
 
 let exec = async (plistPath) => {
     return new Promise((resolve, reject) => {
-        let cmd = `plistutil -i ${process.cwd()}/${plistPath}/Info.plist -o ${process.cwd()}/${plistPath}/targetPlist.plist')}`
+        let cmd = `plistutil -i ${process.cwd()}/${plistPath}/Info.plist -o ${process.cwd()}/${plistPath}/tempInfo.plist`
         
         childProcess.exec(cmd, (error, stdout, stderr) => {
             if (error) {
