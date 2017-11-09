@@ -42,14 +42,13 @@ const plist = require('plist');
 const process = require('child_process');
  
 let dealFun = () => {
-  let tempInfo = fs.readFileSync(path.join(__dirname,'/public/plist-file/tempInfo.plist'), 'utf8');
-  let originFile = plist.parse(tempInfo);
+  let originFile = fs.readFileSync(path.join(__dirname,'/public/plist-file/tempInfo.plist'), 'utf8');
 
   // 删除tempInfo文件
   fs.unlink(path.join(__dirname,'/public/plist-file/tempInfo.plist'),err => {
     err && console.log(err)
   });
-  let originObj = JSON.parse(originFile),
+  let originObj = plist.parse(originFile),
       CFBundleDisplayName = originObj.CFBundleDisplayName,
       CFBundleShortVersionString = originObj.CFBundleShortVersionString,
       CFBundleIdentifier = originObj.CFBundleIdentifier;
