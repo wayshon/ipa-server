@@ -8,7 +8,14 @@
     </head>
 
     <body>
-        <a href="itms-services://?action=download-manifest&url=<%=manifest%>">点击开始安装<%=title%></a>
+        <a id="download" href="itms-services://?action=download-manifest&url=<%=manifest%>">点击开始安装<%=title%></a>
+        <script>
+            var download = document.getElementById('download');
+            download.addEventListener('click', function(event) {
+                var url = encodeURI('tms-services://?action=download-manifest&url=<%=manifest%>');
+                location.href = "https://wayshon.com/ipa/download.html?url=" + url;
+            },false)
+        </script>
     </body>
 
     </html>
