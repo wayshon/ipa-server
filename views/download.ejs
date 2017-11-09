@@ -10,8 +10,9 @@
     <body>
         <script>
             window.onload = function() {
-                var url = encodeURI('tms-services://?action=download-manifest&url=<%=manifest%>');
-                location.href = "https://wayshon.com/ipa/download.html?url=" + url;
+                
+                var url = encodeURIComponent('tms-services://?action=download-manifest&url=<%=manifest%>');
+                location.href = "https://wayshon.com/ipa/download.html?path=" + url;
             }
             
         </script>
