@@ -10,32 +10,27 @@ class UtilsController {
         let req = ctx.request.body,
             ipa = req.files.ipa;
 
-        let date = new Date(),
-            y = date.getFullYear(),
-            m = date.getMonth(),
-            d = date.getDay(),
-            time = `${y}-${m}-${d}`;
+        let projectName = ipa.name.split('.')[0];
 
-        let folder = `${cwdPath}/public/ipa/${time}`,
+        let folder = `/root/html-file/home-page/ipa/${projectName}`,
             filePath = `${folder}/${ipa.name}`,
-            tempPath = `${cwdPath}/public/temp`
+            tempPath = `${cwdPath}/public/temp`;
 
-        if (!fs.existsSync(`${cwdPath}/public/ipa/${time}`)) {
-            fs.mkdirSync(`${cwdPath}/public/ipa/${time}`);
+        if (!fs.existsSync(folder)) {
+            fs.mkdirSync(folder);
         }
 
         let reader = fs.createReadStream(ipa.path),
             stream = fs.createWriteStream(filePath);
         reader.pipe(stream);
 
-        let ipaPath =  `http://wayshon.com:3344/ipa/${time}/${ipa.name}`
+        let ipaPath =  `https://wayshon.com/ipa/${projectName}/${ipa.name}`
 
         new adm_zip(ipa.path).extractAllTo(tempPath, true);
         
-        let plistPath = `${process.cwd()}/public/temp/Payload/ctripzhuanche.app`,
-            targetPath = `${process.cwd()}/public/ipa/${time}`;
+        let plistPath = `${process.cwd()}/public/temp/Payload/ctripzhuanche.app`;
 
-        let CFBundleDisplayName = await creatPlist(plistPath, targetPath, ipaPath);
+        let CFBundleDisplayName = await creatPlist(plistPath, folder, ipaPath);
 
         // 删除temp里的文件
         childProcess.exec(`rm -rf ${tempPath}/${ipa.name}`, (error, stdout, stderr) => {
@@ -43,13 +38,13 @@ class UtilsController {
         });
 
         // ctx.body = {
-        //     manifest: `http://wayshon.com:3344/ipa/${time}/manifest.plist`,
+        //     manifest: `http://wayshon.com:3344/ipa/${projectName}/manifest.plist`,
         //     ipaPath: ipaPath
         // }
 
         await ctx.render('download', {
             title: CFBundleDisplayName,
-            manifest: `http://wayshon.com:3344/ipa/${time}/manifest.plist`,
+            manifest: `https://wayshon.com/ipa/${projectName}/manifest.plist`,
         })
     }
 }
