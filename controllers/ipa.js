@@ -101,7 +101,7 @@ let writeFile = (plistPath, targetPath, manifest) => {
     })
 }
 
-let creatPlist = async (plistPath, targetPath) => {
+let creatPlist = async (plistPath, targetPath, ipaPath) => {
     await exec(plistPath);
     await dealFun(plistPath, targetPath, ipaPath);
     return 1;
