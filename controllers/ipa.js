@@ -1,9 +1,11 @@
 const fs = require('fs'),
     tool = require("../utils/Tools"),
     adm_zip = require('adm-zip'),
-
     childProcess = require('child_process'),
-    plist = require('plist');
+    plist = require('plist'),
+    cwdPath = process.cwd();
+
+let ipaPath = '';
 
 class UtilsController {
     async upload(ctx, next) {
@@ -16,33 +18,43 @@ class UtilsController {
             d = date.getDay(),
             time = `${y}-${m}-${d}`;
 
-        let folder = `${process.cwd()}/public/ipa/${time}`,
-            filePath = `${folder}/${ipa.name}`
+        let folder = `${cwdPath}/public/ipa/${time}`,
+            filePath = `${folder}/${ipa.name}`,
+            tempPath = `${cwdPath}/public/temp`
 
-        if (!fs.existsSync(folder)) {
-            fs.mkdirSync(folder);
+        if (!fs.existsSync(`${cwdPath}/public/ipa/${time}`)) {
+            fs.mkdirSync(`${cwdPath}/public/ipa/${time}`);
         }
 
-        // let reader = fs.createReadStream(ipa.path),
-        //     stream = fs.createWriteStream(filePath);
-        // reader.pipe(stream);
+        let reader = fs.createReadStream(ipa.path),
+            stream = fs.createWriteStream(filePath);
+        reader.pipe(stream);
 
-        new adm_zip(ipa.path).extractAllTo(`${process.cwd()}/public/ipa/${time}/`, true);
+        ipaPath =  `http://wayshon.com:3344/ipa/${time}/${ipa.name}`
+
+        new adm_zip(ipa.path).extractAllTo(tempPath, true);
         
+        let plistPath = `${process.cwd()}/public/temp/Payload/ctripzhuanche.app`,
+            targetPath = `${process.cwd()}/public/ipa/${time}`;
 
-        await creatPlist(`public/ipa/${time}/Payload/ctripzhuanche.app`);
+        await creatPlist(plistPath, targetPath);
+
+        // 删除temp里的文件
+        childProcess.exec(`rm -rf ${tempPath}/${ipa.name}`, (error, stdout, stderr) => {
+            error && console.log(error)
+        });
 
         ctx.body = {
-            msg: `http://wayshon.com:3344/ipa/${time}/Payload/ctripzhuanche.app/targetPlist.plist`
+            msg: `http://wayshon.com:3344/ipa/${time}/manifest.plist`
         }
     }
 }
 
-let dealFun = async (plistPath) => {
-    let originFile = fs.readFileSync(`${process.cwd()}/${plistPath}/tempInfo.plist`, 'utf8');
+let dealFun = async (plistPath, targetPath) => {
+    let originFile = fs.readFileSync(`${plistPath}/tempInfo.plist`, 'utf8');
 
     // 删除tempInfo文件
-    fs.unlink(`${process.cwd()}/${plistPath}/tempInfo.plist`, err => {
+    fs.unlink(`${plistPath}/tempInfo.plist`, err => {
         err && console.log(err)
     });
     let originObj = plist.parse(originFile),
@@ -50,24 +62,24 @@ let dealFun = async (plistPath) => {
         CFBundleShortVersionString = originObj.CFBundleShortVersionString,
         CFBundleIdentifier = originObj.CFBundleIdentifier;
 
-    let targetFile = fs.readFileSync(`${process.cwd()}/public/plist-file/manifest.plist`, 'utf8')
+    let targetFile = fs.readFileSync(`${process.cwd()}/public/plist-file/model.plist`, 'utf8')
     let targetObj = plist.parse(targetFile);
     targetObj.items[0].metadata.title = CFBundleDisplayName;
     targetObj.items[0].metadata['bundle-version'] = CFBundleShortVersionString;
     targetObj.items[0].metadata['bundle-identifier'] = CFBundleIdentifier;
     // TODO:ADDR
-    targetObj.items[0].assets[0].url = 'https://wayshon.com/ipa/RTN/RTN.ipa';
+    targetObj.items[0].assets[0].url = ipaPath;
 
-    let targetPlist = plist.build(targetObj)
-    console.log(targetPlist)
+    let manifest = plist.build(targetObj)
+    console.log(manifest)
 
-    await writeFile(plistPath, targetPlist);
+    await writeFile(plistPath, targetPath, manifest);
     return 1;
 }
 
 let exec = async (plistPath) => {
     return new Promise((resolve, reject) => {
-        let cmd = `plistutil -i ${process.cwd()}/${plistPath}/Info.plist -o ${process.cwd()}/${plistPath}/tempInfo.plist`
+        let cmd = `plistutil -i ${plistPath}/Info.plist -o ${plistPath}/tempInfo.plist`
         
         childProcess.exec(cmd, (error, stdout, stderr) => {
             if (error) {
@@ -78,9 +90,9 @@ let exec = async (plistPath) => {
     })
 }
 
-let writeFile = (plistPath, targetPlist) => {
+let writeFile = (plistPath, targetPath, manifest) => {
     return new Promise((resolve, reject) => {
-        fs.writeFile(`${process.cwd()}/${plistPath}/targetPlist.plist`, targetPlist, error => {
+        fs.writeFile(`${targetPath}/manifest.plist`, manifest, error => {
             if (error) {
                 reject(error)
             } else {
@@ -90,9 +102,9 @@ let writeFile = (plistPath, targetPlist) => {
     })
 }
 
-let creatPlist = async (plistPath) => {
+let creatPlist = async (plistPath, targetPath) => {
     await exec(plistPath);
-    await dealFun(plistPath);
+    await dealFun(plistPath, targetPath);
     return 1;
 }
 
