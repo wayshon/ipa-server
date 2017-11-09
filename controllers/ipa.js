@@ -48,8 +48,8 @@ class UtilsController {
         // }
 
         await ctx.render('download', {
+            title: `下载 ${ipa.name}`,
             manifest: `http://wayshon.com:3344/ipa/${time}/manifest.plist`,
-            ipaPath: ipaPath
         })
     }
 }
