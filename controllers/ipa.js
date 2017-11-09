@@ -42,10 +42,15 @@ class UtilsController {
             error && console.log(error)
         });
 
-        ctx.body = {
+        // ctx.body = {
+        //     manifest: `http://wayshon.com:3344/ipa/${time}/manifest.plist`,
+        //     ipaPath: ipaPath
+        // }
+
+        await ctx.render('download', {
             manifest: `http://wayshon.com:3344/ipa/${time}/manifest.plist`,
             ipaPath: ipaPath
-        }
+        })
     }
 }
 
