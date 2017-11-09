@@ -5,8 +5,6 @@ const fs = require('fs'),
     plist = require('plist'),
     cwdPath = process.cwd();
 
-let ipaPath = '';
-
 class UtilsController {
     async upload(ctx, next) {
         let req = ctx.request.body,
@@ -30,14 +28,14 @@ class UtilsController {
             stream = fs.createWriteStream(filePath);
         reader.pipe(stream);
 
-        ipaPath =  `http://wayshon.com:3344/ipa/${time}/${ipa.name}`
+        let ipaPath =  `http://wayshon.com:3344/ipa/${time}/${ipa.name}`
 
         new adm_zip(ipa.path).extractAllTo(tempPath, true);
         
         let plistPath = `${process.cwd()}/public/temp/Payload/ctripzhuanche.app`,
             targetPath = `${process.cwd()}/public/ipa/${time}`;
 
-        await creatPlist(plistPath, targetPath);
+        await creatPlist(plistPath, targetPath, ipaPath);
 
         // 删除temp里的文件
         childProcess.exec(`rm -rf ${tempPath}/${ipa.name}`, (error, stdout, stderr) => {
@@ -45,12 +43,13 @@ class UtilsController {
         });
 
         ctx.body = {
-            msg: `http://wayshon.com:3344/ipa/${time}/manifest.plist`
+            manifest: `http://wayshon.com:3344/ipa/${time}/manifest.plist`,
+            ipaPath: ipaPath
         }
     }
 }
 
-let dealFun = async (plistPath, targetPath) => {
+let dealFun = async (plistPath, targetPath, ipaPath) => {
     let originFile = fs.readFileSync(`${plistPath}/tempInfo.plist`, 'utf8');
 
     // 删除tempInfo文件
@@ -71,7 +70,7 @@ let dealFun = async (plistPath, targetPath) => {
     targetObj.items[0].assets[0].url = ipaPath;
 
     let manifest = plist.build(targetObj)
-    console.log(manifest)
+    // console.log(manifest)
 
     await writeFile(plistPath, targetPath, manifest);
     return 1;
@@ -104,7 +103,7 @@ let writeFile = (plistPath, targetPath, manifest) => {
 
 let creatPlist = async (plistPath, targetPath) => {
     await exec(plistPath);
-    await dealFun(plistPath, targetPath);
+    await dealFun(plistPath, targetPath, ipaPath);
     return 1;
 }
 
