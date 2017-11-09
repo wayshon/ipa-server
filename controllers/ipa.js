@@ -42,10 +42,14 @@ class UtilsController {
         //     ipaPath: ipaPath
         // }
 
-        await ctx.render('download', {
-            title: CFBundleDisplayName,
-            manifest: `https://wayshon.com/ipa/${projectName}/manifest.plist`,
-        })
+        // await ctx.render('download', {
+        //     title: CFBundleDisplayName,
+        //     manifest: `https://wayshon.com/ipa/${projectName}/manifest.plist`,
+        // })
+
+        let url = `tms-services://?action=download-manifest&url=https://wayshon.com/ipa/${projectName}/manifest.plist`
+
+        ctx.response.body = fs.createReadStream(`/root/html-file/home-page/ipa/download.html?path=${encodeURI(url)}`);
     }
 }
 
