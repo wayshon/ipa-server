@@ -40,7 +40,7 @@ let dealFun = async (plistPath) => {
     let originFile = fs.readFileSync(`${plistPath}/tempInfo.plist`, 'utf8');
 
     // 删除tempInfo文件
-    fs.unlink(`${plistPath}/tempInfo.plist`, err => {
+    fs.unlink(`${process.cwd()}/${plistPath}/tempInfo.plist`, err => {
         err && console.log(err)
     });
     let originObj = plist.parse(originFile),
@@ -48,7 +48,7 @@ let dealFun = async (plistPath) => {
         CFBundleShortVersionString = originObj.CFBundleShortVersionString,
         CFBundleIdentifier = originObj.CFBundleIdentifier;
 
-    let targetFile = fs.readFileSync('/public/plist-file/manifest.plist', 'utf8')
+    let targetFile = fs.readFileSync(`${process.cwd()}/public/plist-file/manifest.plist`, 'utf8')
     let targetObj = plist.parse(targetFile);
     targetObj.items[0].metadata.title = CFBundleDisplayName;
     targetObj.items[0].metadata['bundle-version'] = CFBundleShortVersionString;
@@ -65,9 +65,9 @@ let dealFun = async (plistPath) => {
 
 let exec = async (plistPath) => {
     return new Promise((resolve, reject) => {
-        let cmd = `plistutil -i ${plistPath}/Info.plist -o ${plistPath}/targetPlist.plist')}`
+        let cmd = `plistutil -i ${process.cwd()}/${plistPath}/Info.plist -o ${process.cwd()}/${plistPath}/targetPlist.plist')}`
         
-        process.exec(cmd, (error, stdout, stderr) => {
+        childProcess.exec(cmd, (error, stdout, stderr) => {
             if (error) {
                 reject(error)
             }
@@ -78,7 +78,7 @@ let exec = async (plistPath) => {
 
 let writeFile = (plistPath, targetPlist) => {
     return new Promise((resolve, reject) => {
-        fs.writeFile(`${plistPath}/targetPlist.plist`, targetPlist, error => {
+        fs.writeFile(`${process.cwd()}/${plistPath}/targetPlist.plist`, targetPlist, error => {
             if (error) {
                 reject(error)
             } else {
