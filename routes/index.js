@@ -2,7 +2,7 @@ const router = require('koa-router')()
 
 const ipaController = require('../controllers/ipa');
 
-router.get('/upload', async (ctx, next) => {
+router.get('/', async (ctx, next) => {
     await ctx.render('upload')
 })
 
