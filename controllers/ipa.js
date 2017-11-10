@@ -48,7 +48,7 @@ class UtilsController {
         let itmsServices = encodeURIComponent('itms-services://?action=download-manifest&url=<%=manifest%>'),
             pageUrl = `https://wayshon.com/ipa/download.html?path=${itmsServices}`;
             
-        let imgUrl = await getQRCodeUrl(pageUrl);
+        let imgUrl = await getQRCodeUrl(pageUrl),
             qrImgUrl = imgUrl.replace('image/png', 'image/octet-stream');
 
         await ctx.render('download', {
