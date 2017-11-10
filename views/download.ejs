@@ -8,14 +8,8 @@
     </head>
 
     <body>
-        <script>
-            window.onload = function() {
-                
-                var url = encodeURIComponent('itms-services://?action=download-manifest&url=<%=manifest%>');
-                location.href = "https://wayshon.com/ipa/download.html?path=" + url;
-            }
-            
-        </script>
+        <h1>请扫描二维码下载，或者点击<a href="<%=pageUrl%>">去下载页</a></h1>
+        <img width="300" height="300" src="<%=qrImgUrl%>" alt="二维码" />
     </body>
 
     </html>

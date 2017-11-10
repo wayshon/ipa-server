@@ -3,7 +3,8 @@ const fs = require('fs'),
     adm_zip = require('adm-zip'),
     childProcess = require('child_process'),
     plist = require('plist'),
-    cwdPath = process.cwd();
+    cwdPath = process.cwd(),
+    QRCode = require('qrcode');
 
 class UtilsController {
     async upload(ctx, next) {
@@ -44,9 +45,20 @@ class UtilsController {
         //     ipaPath: ipaPath
         // }
 
+        let itmsServices = encodeURIComponent('itms-services://?action=download-manifest&url=<%=manifest%>'),
+            pageUrl = `https://wayshon.com/ipa/download.html?path=${url}`,
+            qrImgUrl = '';
+
+
+        QRCode.toDataURL(pageUrl, (err, url) => {
+            console.log(url)
+            qrImgUrl = url.replace('image/png', 'image/octet-stream');
+        })
+
         await ctx.render('download', {
             title: CFBundleDisplayName,
-            manifest: `https://wayshon.com/ipa/${projectName}/manifest.plist`,
+            qrImgUrl: qrImgUrl,
+            pageUrl: pageUrl
         })
     }
 }
@@ -117,9 +129,7 @@ let getInnerPath = async (plistPath) => {
             if (error) {
                 reject(error)
             }
-            console.log('stdout : ' + stdout)
             let path = iGetInnerText(stdout)
-            console.log('path : ' + path)
             resolve(path)
         });
     })
