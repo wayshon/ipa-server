@@ -117,9 +117,19 @@ let getInnerPath = async (plistPath) => {
             if (error) {
                 reject(error)
             }
-            resolve(stdout)
+            console.log('stdout : ' + stdout)
+            let path = iGetInnerText(stdout)
+            console.log('path : ' + path)
+            resolve(path)
         });
     })
+}
+
+let iGetInnerText = (testStr) => {
+    var resultStr = testStr.replace(/\ +/g, ""); //去掉空格
+    resultStr = testStr.replace(/[ ]/g, "");    //去掉空格
+    resultStr = testStr.replace(/[\r\n]/g, ""); //去掉回车换行
+    return resultStr;
 }
 
 
