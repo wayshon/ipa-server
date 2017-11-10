@@ -46,14 +46,10 @@ class UtilsController {
         // }
 
         let itmsServices = encodeURIComponent('itms-services://?action=download-manifest&url=<%=manifest%>'),
-            pageUrl = `https://wayshon.com/ipa/download.html?path=${itmsServices}`,
-            qrImgUrl = '';
-
-
-        QRCode.toDataURL(pageUrl, (err, url) => {
-            console.log(url)
-            qrImgUrl = url.replace('image/png', 'image/octet-stream');
-        })
+            pageUrl = `https://wayshon.com/ipa/download.html?path=${itmsServices}`;
+            
+        let imgUrl = await getQRCodeUrl(pageUrl);
+            qrImgUrl = imgUrl.replace('image/png', 'image/octet-stream');
 
         await ctx.render('download', {
             title: CFBundleDisplayName,
@@ -140,6 +136,17 @@ let iGetInnerText = (testStr) => {
     resultStr = testStr.replace(/[ ]/g, "");    //去掉空格
     resultStr = testStr.replace(/[\r\n]/g, ""); //去掉回车换行
     return resultStr;
+}
+
+getQRCodeUrl = async (pageUrl) => {
+    return new Promise((resolve, reject) => {
+        QRCode.toDataURL(pageUrl, (err, url) => {
+            if (err) {
+                reject(err)
+            }
+            resolve(url);
+        })
+    })
 }
 
 
