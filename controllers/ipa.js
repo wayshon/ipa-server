@@ -46,7 +46,7 @@ class UtilsController {
         // }
 
         let itmsServices = encodeURIComponent('itms-services://?action=download-manifest&url=<%=manifest%>'),
-            pageUrl = `https://wayshon.com/ipa/download.html?path=${url}`,
+            pageUrl = `https://wayshon.com/ipa/download.html?path=${itmsServices}`,
             qrImgUrl = '';
 
 
