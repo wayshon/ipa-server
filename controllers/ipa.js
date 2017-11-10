@@ -28,7 +28,9 @@ class UtilsController {
 
         new adm_zip(ipa.path).extractAllTo(tempPath, true);
         
-        let plistPath = `${process.cwd()}/public/temp/Payload/ctripzhuanche.app`;
+        let innerPath = await getInnerPath();
+
+        let plistPath = `${process.cwd()}/public/temp/Payload/${innerPath}`;
 
         let CFBundleDisplayName = await creatPlist(plistPath, folder, ipaPath);
 
@@ -105,6 +107,19 @@ let creatPlist = async (plistPath, targetPath, ipaPath) => {
     await exec(plistPath);
     let CFBundleDisplayName = await dealFun(plistPath, targetPath, ipaPath);
     return CFBundleDisplayName;
+}
+
+let getInnerPath = async (plistPath) => {
+    return new Promise((resolve, reject) => {
+        let cmd = `cd ${process.cwd()}/public/temp/Payload && ls`
+        
+        childProcess.exec(cmd, (error, stdout, stderr) => {
+            if (error) {
+                reject(error)
+            }
+            resolve(stdout)
+        });
+    })
 }
 
 
