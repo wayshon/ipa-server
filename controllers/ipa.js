@@ -24,7 +24,7 @@ class UtilsController {
             console.log(nameArr[nameArr.length - 1])
 
             if (!projectName || nameArr[nameArr.length - 1] != 'ipa') {
-                ctx.body = {
+                return ctx.body = {
                     msg: '给我传ipa包好嘛！'
                 }
             }
