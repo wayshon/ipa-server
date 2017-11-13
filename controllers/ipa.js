@@ -44,8 +44,8 @@ class UtilsController {
         //     manifest: `http://wayshon.com:3344/ipa/${projectName}/manifest.plist`,
         //     ipaPath: ipaPath
         // }
-
-        let itmsServices = encodeURIComponent('itms-services://?action=download-manifest&url=<%=manifest%>'),
+        
+        let itmsServices = encodeURIComponent(`itms-services://?action=download-manifest&url=https://wayshon.com/ipa/${projectName}/manifest.plist`),
             pageUrl = `https://wayshon.com/ipa/download.html?path=${itmsServices}`;
             
         let imgUrl = await getQRCodeUrl(pageUrl),
