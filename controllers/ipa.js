@@ -13,7 +13,7 @@ class UtilsController {
                 ipa = req.files.ipa;
 
             let projectName = ipa.name.split('.')[0];
-            console.log(projectName)
+            console.log(ipa.name)
             if (!projectName || ipa.name.split('.')[1] != 'ipa') {
                 ctx.body = {
                     msg: '给我传ipa包好嘛！'
