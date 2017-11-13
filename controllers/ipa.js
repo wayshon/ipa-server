@@ -14,7 +14,7 @@ class UtilsController {
 
             let projectName = ipa.name.split('.')[0];
 
-            if (!projectName || ipa.name.split('.')[1]) {
+            if (!projectName || ipa.name.split('.')[1] != 'ipa') {
                 ctx.body = {
                     msg: '给我传ipa包好嘛！'
                 }
