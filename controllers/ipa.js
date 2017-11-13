@@ -8,54 +8,67 @@ const fs = require('fs'),
 
 class UtilsController {
     async upload(ctx, next) {
-        let req = ctx.request.body,
-            ipa = req.files.ipa;
+        try {
+            let req = ctx.request.body,
+                ipa = req.files.ipa;
 
-        let projectName = ipa.name.split('.')[0];
+            let projectName = ipa.name.split('.')[0];
 
-        let folder = `/root/html-file/home-page/ipa/${projectName}`,
-            filePath = `${folder}/${ipa.name}`,
-            tempPath = `${cwdPath}/public/temp`;
+            if (!projectName || ipa.name.split('.')[1]) {
+                ctx.body = {
+                    msg: '给我传ipa包好嘛！'
+                }
+            }
 
-        if (!fs.existsSync(folder)) {
-            fs.mkdirSync(folder);
-        }
+            let folder = `/root/html-file/home-page/ipa/${projectName}`,
+                filePath = `${folder}/${ipa.name}`,
+                tempPath = `${cwdPath}/public/temp`;
 
-        let reader = fs.createReadStream(ipa.path),
-            stream = fs.createWriteStream(filePath);
-        reader.pipe(stream);
+            if (!fs.existsSync(folder)) {
+                fs.mkdirSync(folder);
+            }
 
-        let ipaPath =  `https://wayshon.com/ipa/${projectName}/${ipa.name}`
+            let reader = fs.createReadStream(ipa.path),
+                stream = fs.createWriteStream(filePath);
+            reader.pipe(stream);
 
-        new adm_zip(ipa.path).extractAllTo(tempPath, true);
-        
-        let innerPath = await getInnerPath();
+            let ipaPath =  `https://wayshon.com/ipa/${projectName}/${ipa.name}`
 
-        let plistPath = `${process.cwd()}/public/temp/Payload/${innerPath}`;
-
-        let CFBundleDisplayName = await creatPlist(plistPath, folder, ipaPath);
-
-        // 删除temp里的文件
-        childProcess.exec(`rm -rf ${tempPath}/${ipa.name}`, (error, stdout, stderr) => {
-            error && console.log(error)
-        });
-
-        // ctx.body = {
-        //     manifest: `http://wayshon.com:3344/ipa/${projectName}/manifest.plist`,
-        //     ipaPath: ipaPath
-        // }
-        
-        let itmsServices = encodeURIComponent(`itms-services://?action=download-manifest&url=https://wayshon.com/ipa/${projectName}/manifest.plist`),
-            pageUrl = `https://wayshon.com/ipa/download.html?path=${itmsServices}`;
+            new adm_zip(ipa.path).extractAllTo(tempPath, true);
             
-        let imgUrl = await getQRCodeUrl(pageUrl),
-            qrImgUrl = imgUrl.replace('image/png', 'image/octet-stream');
+            let innerPath = await getInnerPath();
 
-        await ctx.render('download', {
-            title: CFBundleDisplayName,
-            qrImgUrl: qrImgUrl,
-            pageUrl: pageUrl
-        })
+            let plistPath = `${process.cwd()}/public/temp/Payload/${innerPath}`;
+
+            let CFBundleDisplayName = await creatPlist(plistPath, folder, ipaPath);
+
+            // 删除temp里的文件
+            childProcess.exec(`rm -rf ${tempPath}/${ipa.name}`, (error, stdout, stderr) => {
+                error && console.log(error)
+            });
+
+            // ctx.body = {
+            //     manifest: `http://wayshon.com:3344/ipa/${projectName}/manifest.plist`,
+            //     ipaPath: ipaPath
+            // }
+            
+            let itmsServices = encodeURIComponent(`itms-services://?action=download-manifest&url=https://wayshon.com/ipa/${projectName}/manifest.plist`),
+                pageUrl = `https://wayshon.com/ipa/download.html?path=${itmsServices}`;
+                
+            let imgUrl = await getQRCodeUrl(pageUrl),
+                qrImgUrl = imgUrl.replace('image/png', 'image/octet-stream');
+
+            await ctx.render('download', {
+                title: CFBundleDisplayName,
+                qrImgUrl: qrImgUrl,
+                pageUrl: pageUrl
+            })
+        } catch(e) {
+            ctx.body = {
+                code: 500,
+                msg: JSON.stringify(e)
+            }
+        }
     }
 }
 
