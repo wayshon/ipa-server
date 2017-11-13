@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>wayshon.com</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    </head>
+    <body>
+      <a id="download" href=""> 下载 App</a>
+      <script>
+        window.onload = function() {
+          var params = location.href.split('?')[1];
+          if (params) {
+            var key = params.split("=")[0],
+                value = params.split("=")[1];
+            if (key == "path") {
+              var path = decodeURIComponent(value)
+              document.getElementById('download').setAttribute("href",path);
+            }
+          }
+        }
+      </script>
+    </body>
+    </html>
