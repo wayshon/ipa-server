@@ -12,9 +12,17 @@ class UtilsController {
             let req = ctx.request.body,
                 ipa = req.files.ipa;
 
-            let projectName = ipa.name.split('.')[0];
-            console.log(ipa.name)
-            if (!projectName || ipa.name.split('.')[1] != 'ipa') {
+            let projectName = '';
+            
+            let nameArr = ipa.name.split('.');
+            for (let i = 0;i < nameArr.length - 1; i++) {
+                projectName += nameArr[0];
+            }
+            
+            // let projectName = ipa.name.split('.')[0];
+            console.log(projectName)
+
+            if (!projectName || nameArr[nameArr.length - 1] != 'ipa') {
                 ctx.body = {
                     msg: '给我传ipa包好嘛！'
                 }
