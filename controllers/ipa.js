@@ -21,6 +21,7 @@ class UtilsController {
             
             // let projectName = ipa.name.split('.')[0];
             console.log(projectName)
+            console.log(nameArr[nameArr.length - 1])
 
             if (!projectName || nameArr[nameArr.length - 1] != 'ipa') {
                 ctx.body = {
