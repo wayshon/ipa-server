@@ -27,11 +27,11 @@ class UtilsController {
                 }
             }
 
-            // let folder = `/root/html-file/home-page/apk`,
-            //     filePath = `${folder}/${apk.name}`;
-
-            let folder = `${process.cwd()}/public/apk`,
+            let folder = `/root/html-file/home-page/apk`,
                 filePath = `${folder}/${apk.name}`;
+
+            // let folder = `${process.cwd()}/public/apk`,
+            //     filePath = `${folder}/${apk.name}`;
 
 
             if (!fs.existsSync(folder)) {
