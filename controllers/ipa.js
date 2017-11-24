@@ -3,8 +3,7 @@ const fs = require('fs'),
     adm_zip = require('adm-zip'),
     childProcess = require('child_process'),
     plist = require('plist'),
-    cwdPath = process.cwd(),
-    QRCode = require('qrcode');
+    cwdPath = process.cwd();
 
 class UtilsController {
     async upload(ctx, next) {
@@ -64,7 +63,7 @@ class UtilsController {
             let itmsServices = encodeURIComponent(`itms-services://?action=download-manifest&url=https://wayshon.com/ipa/${projectName}/manifest.plist`),
                 pageUrl = `https://wayshon.com/ipa/download.html?path=${itmsServices}`;
                 
-            let imgUrl = await getQRCodeUrl(pageUrl),
+            let imgUrl = await tool.getQRCodeUrl(pageUrl),
                 qrImgUrl = imgUrl.replace('image/png', 'image/octet-stream');
 
             await ctx.render('download', {
@@ -73,6 +72,7 @@ class UtilsController {
                 pageUrl: pageUrl
             })
         } catch(e) {
+            console.log(e)
             ctx.body = {
                 code: 500,
                 msg: JSON.stringify(e)
