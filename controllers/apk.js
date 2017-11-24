@@ -27,11 +27,11 @@ class UtilsController {
                 }
             }
 
-            let folder = `/root/html-file/home-page/apk`,
-                filePath = `${folder}/${apk.name}`;
-
-            // let folder = `${process.cwd()}/public/apk`,
+            // let folder = `/root/html-file/home-page/apk`,
             //     filePath = `${folder}/${apk.name}`;
+
+            let folder = `${process.cwd()}/public/apk`,
+                filePath = `${folder}/${apk.name}`;
 
 
             if (!fs.existsSync(folder)) {
@@ -42,14 +42,14 @@ class UtilsController {
                 stream = fs.createWriteStream(filePath);
             reader.pipe(stream);
 
-            let apkPath =  `https://wayshon.com/apk/${apk.name}`
+            let apkPath =  `https://wayshon.com/apk/${apk.name}`;
             let imgUrl = await tool.getQRCodeUrl(apkPath),
                 qrImgUrl = imgUrl.replace('image/png', 'image/octet-stream');
 
             await ctx.render('download', {
                 title: "下载app",
                 qrImgUrl: qrImgUrl,
-                pageUrl: filePath
+                pageUrl: apkPath
             })
         } catch (e) {
             console.log(e)
